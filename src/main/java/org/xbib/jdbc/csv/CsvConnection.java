@@ -18,7 +18,7 @@
  */
 package org.xbib.jdbc.csv;
 
-import org.xbib.io.TableReader;
+import org.xbib.jdbc.csv.support.TableReader;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -82,15 +82,6 @@ public class CsvConnection implements Connection {
      */
     private char quotechar = CsvDriver.DEFAULT_QUOTECHAR;
 
-    public boolean isRaiseUnsupportedOperationException() {
-        return raiseUnsupportedOperationException;
-    }
-
-    private void setRaiseUnsupportedOperationException(
-            boolean raiseUnsupportedOperationException) {
-        this.raiseUnsupportedOperationException = raiseUnsupportedOperationException;
-    }
-
     /**
      * Lookup table with headerline to use for each table
      */
@@ -111,12 +102,8 @@ public class CsvConnection implements Connection {
      * Lookup table with column data types for each table
      */
     private Map<String, String> columnTypes = new HashMap();
-    /**
-     * whether ot not to raise a UnsupportedOperationException when calling a
-     * method irrelevant in this context (ex: autocommit whereas there is only
-     * readonly accesses)
-     */
-    private boolean raiseUnsupportedOperationException;
+
+    private Map<String, Class<?>> typemap = new HashMap();
     /**
      * Collection of all created Statements
      */
@@ -221,8 +208,7 @@ public class CsvConnection implements Connection {
 
         // set the header suppression flag
         if (info.getProperty(CsvDriver.SUPPRESS_HEADERS) != null) {
-            suppressHeaders = Boolean.valueOf(info.getProperty(
-                    CsvDriver.SUPPRESS_HEADERS)).booleanValue();
+            suppressHeaders = Boolean.valueOf(info.getProperty(CsvDriver.SUPPRESS_HEADERS));
         }
         // default charset
         if (info.getProperty(CsvDriver.CHARSET) != null) {
@@ -236,9 +222,7 @@ public class CsvConnection implements Connection {
 
         // are files indexed? ()
         if (info.getProperty(CsvDriver.INDEXED_FILES) != null) {
-            indexedFiles = Boolean.valueOf(
-                    info.getProperty(CsvDriver.INDEXED_FILES))
-                    .booleanValue();
+            indexedFiles = Boolean.valueOf(info.getProperty(CsvDriver.INDEXED_FILES));
             fileNamePattern = info.getProperty("fileTailPattern");
             String fileTailParts = info.getProperty("fileTailParts", "");
             if (!fileTailParts.isEmpty()) {
@@ -291,9 +275,6 @@ public class CsvConnection implements Connection {
                 CsvDriver.IGNORE_UNPARSEABLE_LINES,
                 CsvDriver.DEFAULT_IGNORE_UNPARSEABLE_LINES)));
 
-        setRaiseUnsupportedOperationException(Boolean.parseBoolean(info.getProperty(
-                CsvDriver.RAISE_UNSUPPORTED_OPERATION_EXCEPTION,
-                CsvDriver.DEFAULT_RAISE_UNSUPPORTED_OPERATION_EXCEPTION)));
     }
 
     /**
@@ -847,7 +828,7 @@ public class CsvConnection implements Connection {
      */
     @Override
     public Map<String, Class<?>> getTypeMap() throws SQLException {
-        return new HashMap();
+        return typemap;
     }
 
     /**
@@ -864,6 +845,7 @@ public class CsvConnection implements Connection {
      */
     @Override
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+        this.typemap = map;
     }
 
     //--------------------------JDBC 3.0-----------------------------
@@ -958,10 +940,6 @@ public class CsvConnection implements Connection {
     public Savepoint setSavepoint(String str) throws SQLException {
         return null;
     }
-
-    //---------------------------------------------------------------------
-    // Properties
-    //---------------------------------------------------------------------
 
     /**
      * Accessor method for the path property
@@ -1155,6 +1133,7 @@ public class CsvConnection implements Connection {
      * @deprecated Pass columnTypes when creating driver. To be removed in a
      *             future version.
      */
+
     @Deprecated
     public void setColumnTypes(String columnTypes) {
         this.columnTypes.put(null, columnTypes);
@@ -1223,7 +1202,7 @@ public class CsvConnection implements Connection {
         } else if (value.equals("")) {
             commentChar = null;
         } else {
-            commentChar = new Character(value.charAt(0));
+            commentChar = value.charAt(0);
         }
     }
 
@@ -1231,7 +1210,7 @@ public class CsvConnection implements Connection {
         if (commentChar == null) {
             return 0;
         }
-        return commentChar.charValue();
+        return commentChar;
     }
 
     private void setSkipLeadingLines(String property) {
@@ -1277,25 +1256,21 @@ public class CsvConnection implements Connection {
 
     @Override
     public NClob createNClob() throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public SQLXML createSQLXML() throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void setClientInfo(Properties arg0) throws SQLClientInfoException {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void setClientInfo(String arg0, String arg1)
             throws SQLClientInfoException {
-        // TODO Auto-generated method stub
     }
 
     public int getTransposedLines() {

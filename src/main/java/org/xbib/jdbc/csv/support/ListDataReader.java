@@ -13,7 +13,7 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.xbib.io;
+package org.xbib.jdbc.csv.support;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import java.util.Map;
  * A reader from a list, enabling database metadata functions to return JDBC ResultSet objects
  * containing lists of tables, schemas and other metadata.
  */
-public class ListDataReader extends DataReader {
+public class ListDataReader implements DataReader {
     private String[] columnNames;
     private String[] columnTypes;
     private List<Object[]> columnValues;

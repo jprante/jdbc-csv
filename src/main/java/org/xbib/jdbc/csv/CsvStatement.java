@@ -16,10 +16,12 @@
  */
 package org.xbib.jdbc.csv;
 
-import org.xbib.io.DataReader;
-import org.xbib.io.FileSetInputStream;
-import org.xbib.io.ListDataReader;
-import org.xbib.io.TableReader;
+import org.xbib.jdbc.csv.support.CsvRawReader;
+import org.xbib.jdbc.csv.support.CsvReader;
+import org.xbib.jdbc.csv.support.DataReader;
+import org.xbib.jdbc.csv.support.FileSetInputStream;
+import org.xbib.jdbc.csv.support.ListDataReader;
+import org.xbib.jdbc.csv.support.TableReader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -416,7 +418,8 @@ public class CsvStatement implements Statement {
                     parser.getGroupByColumns(),
                     parser.getHavingClause(),
                     parser.getOrderByColumns(),
-                    parser.getLimit(), parser.getOffset(),
+                    parser.getLimit(),
+                    parser.getOffset(),
                     connection.getColumnTypes(tableName),
                     connection.getSkipLeadingLines());
             lastResultSet = resultSet;

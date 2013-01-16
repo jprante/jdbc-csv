@@ -14,9 +14,9 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.xbib.jdbc.csv;
+package org.xbib.jdbc.csv.support;
 
-import org.xbib.io.DataReader;
+import org.xbib.jdbc.csv.CsvDriver;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

@@ -18,8 +18,10 @@
  */
 package org.xbib.jdbc.csv;
 
-import org.xbib.io.DataReader;
-import org.xbib.io.ListDataReader;
+import org.xbib.jdbc.csv.support.CsvReader;
+import org.xbib.jdbc.csv.support.DataReader;
+import org.xbib.jdbc.csv.support.ListDataReader;
+import org.xbib.jdbc.csv.support.StringConverter;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -1424,10 +1426,6 @@ public class CsvResultSet implements ResultSet {
         return getBinaryStream(findColumn(columnName));
     }
 
-    //=====================================================================
-    // Advanced features:
-    //=====================================================================
-
     /**
      * Retrieves the first warning reported by calls on this
      * <code>ResultSet</code> object. Subsequent warnings on this
@@ -1509,15 +1507,13 @@ public class CsvResultSet implements ResultSet {
             int[] readerColumnSizes = reader.getColumnSizes();
             String tableAlias = reader.getTableAlias();
             int columnCount = queryEnvironment.size();
-            String[] columnNames = new String[columnCount];
-            String[] columnLabels = new String[columnCount];
-            int[] columnSizes = new int[columnCount];
-            String[] typeNames = new String[columnCount];
+            List<String> columnNames = new LinkedList();
+            List<String> typeNames = new LinkedList();
 
             /*
              * Create a record containing dummy values.
              */
-            HashMap<String, Object> env = new HashMap<String, Object>();
+            Map<String, Object> env = new HashMap<String, Object>();
             for (int i = 0; i < readerTypeNames.length; i++) {
                 Object literal = StringConverter.getLiteralForTypeName(readerTypeNames[i]);
                 String columnName = readerColumnNames[i].toUpperCase();
@@ -1532,40 +1528,16 @@ public class CsvResultSet implements ResultSet {
 
             for (int i = 0; i < columnCount; i++) {
                 Object[] o = queryEnvironment.get(i);
-                columnNames[i] = (String) o[0];
-                columnLabels[i] = columnNames[i];
-
-                /*
-                 * Evaluate each expression to determine what data type it returns.
-                 */
-                Object result = null;
-                try {
-                    Expression expr = ((Expression) o[1]);
-
-                    int columnSize = DataReader.DEFAULT_COLUMN_SIZE;
-                    if (expr instanceof ColumnName) {
-                        String usedColumn = expr.usedColumns().get(0);
-                        for (int k = 0; k < readerColumnNames.length; k++) {
-                            if (usedColumn.equalsIgnoreCase(readerColumnNames[k])) {
-                                columnSize = readerColumnSizes[k];
-                                break;
-                            }
-                        }
-                    }
-                    columnSizes[i] = columnSize;
-                    result = expr.eval(env);
-                } catch (NullPointerException e) {
-                    /* Expression is invalid */
-                    // TODO: should we throw an SQLException here?
-                }
+                columnNames.add((String) o[0]);
+                Expression expr = ((Expression) o[1]);
+                Object result = expr.eval(env);
                 if (result != null) {
-                    typeNames[i] = StringConverter.getTypeNameForLiteral(result);
+                    typeNames.add(StringConverter.getTypeNameForLiteral(result));
                 } else {
-                    typeNames[i] = "expression";
+                    typeNames.add("expression");
                 }
             }
-            resultSetMetaData = new CsvResultSetMetaData(tableName, columnNames, columnLabels, typeNames,
-                    columnSizes);
+            resultSetMetaData = new CsvResultSetMetaData(tableName, columnNames, typeNames);
         }
         return resultSetMetaData;
     }
@@ -3347,27 +3319,22 @@ public class CsvResultSet implements ResultSet {
     }
 
     public int getHoldability() throws SQLException {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     public Reader getNCharacterStream(int columnIndex) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public Reader getNCharacterStream(String columnLabel) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public String getNString(int columnIndex) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public String getNString(String columnLabel) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -3377,159 +3344,127 @@ public class CsvResultSet implements ResultSet {
 
     public void updateAsciiStream(int columnIndex, InputStream x)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateAsciiStream(String columnLabel, InputStream x)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateAsciiStream(int columnIndex, InputStream x, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateAsciiStream(String columnLabel, InputStream x, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateBinaryStream(int columnIndex, InputStream x)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateBinaryStream(String columnLabel, InputStream x)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateBinaryStream(int columnIndex, InputStream x, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateBinaryStream(String columnLabel, InputStream x,
                                    long length) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateBlob(int columnIndex, InputStream inputStream)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateBlob(String columnLabel, InputStream inputStream)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateBlob(int columnIndex, InputStream inputStream, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateBlob(String columnLabel, InputStream inputStream,
                            long length) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateCharacterStream(int columnIndex, Reader x)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateCharacterStream(String columnLabel, Reader reader)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateCharacterStream(int columnIndex, Reader x, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateCharacterStream(String columnLabel, Reader reader,
                                       long length) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateClob(int columnIndex, Reader reader) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateClob(String columnLabel, Reader reader)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateClob(int columnIndex, Reader reader, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateClob(String columnLabel, Reader reader, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNCharacterStream(int columnIndex, Reader x)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNCharacterStream(String columnLabel, Reader reader)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNCharacterStream(int columnIndex, Reader x, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNCharacterStream(String columnLabel, Reader reader,
                                        long length) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNClob(int columnIndex, Reader reader) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNClob(String columnLabel, Reader reader)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNClob(int columnIndex, Reader reader, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNClob(String columnLabel, Reader reader, long length)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNString(int columnIndex, String string)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNString(String columnLabel, String string)
             throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public boolean isWrapperFor(Class<?> arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return false;
     }
 
     public <T> T unwrap(Class<T> arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -3547,57 +3482,45 @@ public class CsvResultSet implements ResultSet {
     }
 
     public NClob getNClob(int arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public NClob getNClob(String arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public RowId getRowId(int arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public RowId getRowId(String arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public SQLXML getSQLXML(int arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public SQLXML getSQLXML(String arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public void updateNClob(int arg0, NClob arg1) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateNClob(String arg0, NClob arg1) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateRowId(int arg0, RowId arg1) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateRowId(String arg0, RowId arg1) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateSQLXML(int arg0, SQLXML arg1) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public void updateSQLXML(String arg0, SQLXML arg1) throws SQLException {
-        // TODO Auto-generated method stub
     }
 
     public <T> T getObject(int parameterIndex, Class<T> type) {

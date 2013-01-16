@@ -15,7 +15,8 @@
  */
 package org.xbib.jdbc.csv;
 
-import org.xbib.io.ListDataReader;
+import org.xbib.jdbc.csv.support.ListDataReader;
+import org.xbib.jdbc.csv.support.StringConverter;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -31,9 +32,6 @@ import java.util.List;
  * driver. This is mostly stub.
  *
  * @author Jonathan Ackerman
- * @version $Id: CsvDatabaseMetaData.java,v 1.7 2009/12/09 14:12:11 mfrasca Exp
- *          $
- * @created 25 November 2001
  */
 public class CsvDatabaseMetaData implements DatabaseMetaData {
 
@@ -834,31 +832,26 @@ public class CsvDatabaseMetaData implements DatabaseMetaData {
     }
 
     public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
-        // TODO Auto-generated method stub
         return false;
     }
 
     public ResultSet getClientInfoProperties() throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public ResultSet getFunctionColumns(String catalog, String schemaPattern,
                                         String functionNamePattern, String columnNamePattern)
             throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public ResultSet getFunctions(String catalog, String schemaPattern,
                                   String functionNamePattern) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public ResultSet getSchemas(String catalog, String schemaPattern)
             throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 

@@ -1,4 +1,4 @@
-package org.xbib.jdbc.csv;
+package org.xbib.jdbc.csv.support;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -296,7 +296,6 @@ public class StringConverter {
     }
 
     static protected Map<String, Class<?>> forSQLNameMap = new HashMap<String, Class<?>>() {
-        private static final long serialVersionUID = -3037117163532338893L;
 
         {
             try {
@@ -321,14 +320,13 @@ public class StringConverter {
     };
 
     static protected Map<String, Method> converterMethodForClass = new HashMap<String, Method>() {
-        private static final long serialVersionUID = -3037117163532338893L;
         Class<?>[] argTypes = new Class[1];
         Class<?> containerClass = null;
 
         {
             try {
                 argTypes[0] = Class.forName("java.lang.String");
-                containerClass = Class.forName("org.xbib.jdbc.csv.StringConverter");
+                containerClass = Class.forName("org.xbib.jdbc.csv.support.StringConverter");
                 put("String", containerClass.getMethod("parseString", argTypes));
                 put("Boolean", containerClass.getMethod("parseBoolean", argTypes));
                 put("Byte", containerClass.getMethod("parseByte", argTypes));
@@ -509,27 +507,27 @@ public class StringConverter {
                 searchable, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null,
                 shortZero, shortMax, intZero, intZero, intZero});
 
-        retval.add(new Object[]{"BigDecimal", Integer.valueOf(Types.DECIMAL), shortMax,
+        retval.add(new Object[]{"BigDecimal", Types.DECIMAL, shortMax,
                 null, null, null, nullable, Boolean.TRUE,
                 searchable, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null,
                 shortZero, shortMax, intZero, intZero, intZero});
 
-        retval.add(new Object[]{"Date", Integer.valueOf(Types.DATE), shortMax,
+        retval.add(new Object[]{"Date", Types.DATE, shortMax,
                 "'", "'", null, nullable, Boolean.TRUE,
                 searchable, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null,
                 shortZero, shortMax, intZero, intZero, intZero});
 
-        retval.add(new Object[]{"Time", Integer.valueOf(Types.TIME), shortMax,
+        retval.add(new Object[]{"Time", Types.TIME, shortMax,
                 "'", "'", null, nullable, Boolean.TRUE,
                 searchable, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null,
                 shortZero, shortMax, intZero, intZero, intZero});
 
-        retval.add(new Object[]{"Timestamp", Integer.valueOf(Types.TIMESTAMP), shortMax,
+        retval.add(new Object[]{"Timestamp", Types.TIMESTAMP, shortMax,
                 null, null, null, nullable, Boolean.TRUE,
                 searchable, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null,
                 shortZero, shortMax, intZero, intZero, intZero});
 
-        retval.add(new Object[]{"Asciistream", Integer.valueOf(Types.CLOB), shortMax,
+        retval.add(new Object[]{"Asciistream", Types.CLOB, shortMax,
                 null, null, null, nullable, Boolean.TRUE,
                 searchable, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null,
                 shortZero, shortMax, intZero, intZero, intZero});

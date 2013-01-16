@@ -1,4 +1,4 @@
-package org.xbib.io;
+package org.xbib.jdbc.csv.support;
 
 import java.io.Reader;
 import java.sql.Connection;

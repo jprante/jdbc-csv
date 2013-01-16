@@ -20,6 +20,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,57 +28,47 @@ import java.util.Map;
  *
  * @author Jonathan Ackerman
  * @author JD Evora
- * @version $Id: CsvResultSetMetaData.java,v 1.10 2011/10/17 13:47:40 simoc Exp $
+ * @author Jörg Prante <joergprante@gmail.com>
  */
 public class CsvResultSetMetaData implements ResultSetMetaData {
 
-    /**
-     * Names of columns
-     */
-    private String[] columnNames;
-    private String[] columnLabels;
-    private String[] columnTypes;
-    private int[] columnDisplaySizes;
-    /**
-     * Name of table
-     */
+    private List<String> columnNames;
+    private List<String> columnTypes;
     private String tableName;
+
+    private final Map<String, Integer> types = new HashMap<String, Integer>() {
+
+        {
+            put("String", Types.VARCHAR);
+            put("Boolean", Types.BOOLEAN);
+            put("Byte", Types.TINYINT);
+            put("Short", Types.SMALLINT);
+            put("Int", Types.INTEGER);
+            put("Integer", Types.INTEGER);
+            put("Long", Types.BIGINT);
+            put("Float", Types.FLOAT);
+            put("Double", Types.DOUBLE);
+            put("BigDecimal", Types.DECIMAL);
+            put("Date", Types.DATE);
+            put("Time", Types.TIME);
+            put("Timestamp", Types.TIMESTAMP);
+            put("Blob", Types.BLOB);
+            put("Clob", Types.CLOB);
+            put("expression", Types.BLOB);
+        }
+    };
 
     /**
      * Constructor for the CsvResultSetMetaData object
      *
      * @param tableName   Name of table
+     * @param columnNames the column names
      * @param columnTypes Names of columns in table
      */
-    CsvResultSetMetaData(String tableName, String[] columnNames, String[] columnLabels,
-                         String[] columnTypes, int[] columnDisplaySizes) {
+    CsvResultSetMetaData(String tableName, List<String> columnNames, List<String> columnTypes) {
         this.tableName = tableName;
         this.columnNames = columnNames;
-        this.columnLabels = columnLabels;
         this.columnTypes = columnTypes;
-        this.columnDisplaySizes = columnDisplaySizes;
-    }
-
-    /**
-     * Returns the name of the class for the specified column. Always returns
-     * String.
-     *
-     * @param column The column number
-     * @return The name of the class for the requested column
-     * @throws SQLException Thrown if there was a problem
-     */
-    public String getColumnClassName(int column) throws SQLException {
-        return columnTypes[column - 1];
-    }
-
-    /**
-     * Returns the number of columns in the table.
-     *
-     * @return The number of columns in the table
-     * @throws SQLException Thrown if there is a a problem
-     */
-    public int getColumnCount() throws SQLException {
-        return columnTypes.length;
     }
 
     /**
@@ -91,18 +82,73 @@ public class CsvResultSetMetaData implements ResultSetMetaData {
         return "";
     }
 
+    public String getColumnClassName(int column) throws SQLException {
+        throw new SQLException("Method not supported");
+    }
+
     /**
-     * Returns the display column size for the specified column. Always returns
-     * 20.
+     * Returns the number of columns in the table.
+     *
+     * @return The number of columns in the table
+     * @throws SQLException Thrown if there is a a problem
+     */
+    public int getColumnCount() throws SQLException {
+        return columnNames.size();
+    }
+
+    public int getColumnType(int column) throws SQLException {
+        return types.get(columnTypes.get(column-1));
+    }
+
+    public String getColumnTypeName(int column) throws SQLException {
+        return columnTypes.get(column-1);
+    }
+
+    /**
+     * Returns the display column size for the specified column.
      *
      * @param column The column to get the size of
      * @return The size of the requested column
      * @throws SQLException Thrown if there is a problem.
      */
     public int getColumnDisplaySize(int column) throws SQLException {
-        return columnDisplaySizes[column - 1];
+        switch(getColumnType(column)) {
+            case Types.VARCHAR:
+            case Types.BIGINT:
+                return 32;
+            case Types.TINYINT:
+                return 2;
+            case Types.BOOLEAN:
+                return 8;
+            case Types.DOUBLE:
+            case Types.INTEGER:
+                return 16;
+            default:
+                return 32;
+        }
     }
 
+    /**
+     * Returns a comment regarding the specified column
+     *
+     * @param column The column to get the label for
+     * @return the label for the specified column
+     * @throws SQLException Thrown if there is a problem
+     */
+    public String getColumnLabel(int column) throws SQLException {
+        return columnNames.get(column - 1);
+    }
+
+    /**
+     * Returns the name of the specified column
+     *
+     * @param column The column to get the name of
+     * @return The name of the column
+     * @throws SQLException Thrown if there is a problem
+     */
+    public String getColumnName(int column) throws SQLException {
+        return columnNames.get(column - 1);
+    }
     /**
      * Gets the auto increment flag for the specified column.
      *
@@ -171,127 +217,41 @@ public class CsvResultSetMetaData implements ResultSetMetaData {
         return false;
     }
 
-    /**
-     * Returns a comment regarding the specified column
-     *
-     * @param column The column to get the label for
-     * @return the label for the specified column
-     * @throws SQLException Thrown if there is a problem
-     */
-    public String getColumnLabel(int column) throws SQLException {
-        // SQL column numbers start at 1
-        return columnLabels[column - 1];
-    }
-
-    /**
-     * Returns the name of the specified column
-     *
-     * @param column The column to get the name of
-     * @return The name of the column
-     * @throws SQLException Thrown if there is a problem
-     */
-    public String getColumnName(int column) throws SQLException {
-        // SQL column numbers start at 1
-        return columnNames[column - 1];
-    }
-
-    /**
-     * Comments to be done
-     */
     public String getSchemaName(int column) throws SQLException {
         return "";
     }
 
-    /**
-     * Comments to be done
-     */
     public int getPrecision(int column) throws SQLException {
         // All the fields are text, should this throw an SQLException?
         return 0;
     }
 
-    /**
-     * Comments to be done
-     */
     public int getScale(int column) throws SQLException {
         // All the fields are text, should this throw an SQLException?
         return 0;
     }
 
-    /**
-     * Comments to be done
-     */
     public String getTableName(int column) throws SQLException {
         return tableName;
     }
 
-    private Map<String, Integer> typeNameToTypeCode = new HashMap<String, Integer>() {
-        private static final long serialVersionUID = -8819579540085202365L;
-
-        {
-            put("String", new Integer(Types.VARCHAR));
-            put("Boolean", new Integer(Types.BOOLEAN));
-            put("Byte", new Integer(Types.TINYINT));
-            put("Short", new Integer(Types.SMALLINT));
-            put("Int", new Integer(Types.INTEGER));
-            put("Integer", new Integer(Types.INTEGER));
-            put("Long", new Integer(Types.BIGINT));
-            put("Float", new Integer(Types.FLOAT));
-            put("Double", new Integer(Types.DOUBLE));
-            put("BigDecimal", new Integer(Types.DECIMAL));
-            put("Date", new Integer(Types.DATE));
-            put("Time", new Integer(Types.TIME));
-            put("Timestamp", new Integer(Types.TIMESTAMP));
-            put("Blob", new Integer(Types.BLOB));
-            put("Clob", new Integer(Types.CLOB));
-            put("expression", new Integer(Types.BLOB));
-        }
-    };
-
-    /**
-     * Comments to be done
-     */
-    public int getColumnType(int column) throws SQLException {
-        String columnTypeName = getColumnTypeName(column);
-        Integer value = typeNameToTypeCode.get(columnTypeName);
-        return value.intValue();
-    }
-
-    /**
-     * Comments to be done
-     */
-    public String getColumnTypeName(int column) throws SQLException {
-        return columnTypes[column - 1];
-    }
-
-    /**
-     * Comments to be done
-     */
     public boolean isReadOnly(int column) throws SQLException {
         return true;
     }
 
-    /**
-     * Comments to be done
-     */
     public boolean isWritable(int column) throws SQLException {
         return false;
     }
 
-    /**
-     * Comments to be done
-     */
     public boolean isDefinitelyWritable(int column) throws SQLException {
         return false;
     }
 
     public boolean isWrapperFor(Class<?> arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return false;
     }
 
     public <T> T unwrap(Class<T> arg0) throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 

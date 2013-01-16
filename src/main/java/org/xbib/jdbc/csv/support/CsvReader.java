@@ -1,14 +1,12 @@
-package org.xbib.jdbc.csv;
-
-import org.xbib.io.DataReader;
+package org.xbib.jdbc.csv.support;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
+import java.util.ArrayList;
 
-public class CsvReader extends DataReader {
+public class CsvReader implements DataReader {
 
     private String headerline;
     CsvRawReader rawReader;
@@ -17,7 +15,7 @@ public class CsvReader extends DataReader {
     String[] columnNames;
     String[] aliasedColumnNames;
     private String[] columnTypes;
-    Vector<String[]> firstTable;
+    ArrayList<String[]> firstTable;
     int joiningValueNo;
     int valuesToJoin;
     String[] joiningValues;
@@ -37,7 +35,7 @@ public class CsvReader extends DataReader {
         columnTypes = null;
 
         if (!this.isPlainReader()) {
-            firstTable = new Vector<String[]>();
+            firstTable = new ArrayList<String[]>();
             joiningValueNo = 0;
             joiningValues = null;
             try {
