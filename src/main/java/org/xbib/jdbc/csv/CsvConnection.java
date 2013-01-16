@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -343,7 +344,6 @@ public class CsvConnection implements Connection {
     }
 
     private void setQuoteStyle(String property) {
-        // TODO Auto-generated method stub
         quoteStyle = property;
     }
 
@@ -622,11 +622,6 @@ public class CsvConnection implements Connection {
      */
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-        if (raiseUnsupportedOperationException) {
-            throw new UnsupportedOperationException(
-                    "Connection.setReadOnly(boolean) unsupported. Set driver property "
-                            + CsvDriver.RAISE_UNSUPPORTED_OPERATION_EXCEPTION + " to avoid this exception.");
-        }
     }
 
     /**
@@ -691,8 +686,6 @@ public class CsvConnection implements Connection {
      */
     @Override
     public void setTransactionIsolation(int level) throws SQLException {
-        throw new UnsupportedOperationException(
-                "Connection.setTransactionIsolation(int) unsupported");
     }
 
     /**
@@ -734,13 +727,7 @@ public class CsvConnection implements Connection {
      */
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        if (raiseUnsupportedOperationException) {
-            throw new UnsupportedOperationException(
-                    "Connection.getWarnings() unsupported. Set driver property "
-                            + CsvDriver.RAISE_UNSUPPORTED_OPERATION_EXCEPTION + " to avoid this exception.");
-        } else {
-            return null;
-        }
+        return null;
     }
 
     /**
@@ -754,11 +741,6 @@ public class CsvConnection implements Connection {
      */
     @Override
     public void clearWarnings() throws SQLException {
-        if (raiseUnsupportedOperationException) {
-            throw new UnsupportedOperationException(
-                    "Connection.getWarnings() unsupported. Set driver property "
-                            + CsvDriver.RAISE_UNSUPPORTED_OPERATION_EXCEPTION + " to avoid this exception.");
-        }
     }
 
     //--------------------------JDBC 2.0-----------------------------
@@ -820,8 +802,7 @@ public class CsvConnection implements Connection {
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType,
                                               int resultSetConcurrency) throws SQLException {
-        throw new UnsupportedOperationException(
-                "Connection.prepareStatement(String \"" + sql + "\", int " + resultSetType + ", int " + resultSetConcurrency + ") unsupported");
+         return prepareStatement(sql);
     }
 
     /**
@@ -851,8 +832,7 @@ public class CsvConnection implements Connection {
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType,
                                          int resultSetConcurrency) throws SQLException {
-        throw new UnsupportedOperationException(
-                "Connection.prepareCall(String, int, int) unsupported");
+        return prepareCall(sql);
     }
 
     /**
@@ -867,8 +847,7 @@ public class CsvConnection implements Connection {
      */
     @Override
     public Map<String, Class<?>> getTypeMap() throws SQLException {
-        throw new UnsupportedOperationException(
-                "Connection.getTypeMap() unsupported");
+        return new HashMap();
     }
 
     /**
@@ -885,8 +864,6 @@ public class CsvConnection implements Connection {
      */
     @Override
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-        throw new UnsupportedOperationException(
-                "Connection.setTypeMap(Map) unsupported");
     }
 
     //--------------------------JDBC 3.0-----------------------------
@@ -908,7 +885,6 @@ public class CsvConnection implements Connection {
      */
     @Override
     public void setHoldability(int holdability) throws SQLException {
-        throw new UnsupportedOperationException("Connection.setHoldability(int) unsupported");
     }
 
     /**
@@ -924,14 +900,14 @@ public class CsvConnection implements Connection {
      */
     @Override
     public int getHoldability() throws SQLException {
-        throw new UnsupportedOperationException("Connection.getHoldability() unsupported");
+        return ResultSet.HOLD_CURSORS_OVER_COMMIT;
     }
 
     @Override
     public Statement createStatement(int resultSetType,
                                      int resultSetConcurrency,
                                      int resultSetHoldability) throws SQLException {
-        throw new UnsupportedOperationException("Connection.createStatement(int,int,int) unsupported");
+        return createStatement();
     }
 
     @Override
@@ -939,7 +915,7 @@ public class CsvConnection implements Connection {
                                               int resultSetType,
                                               int resultSetConcurrency,
                                               int resultSetHoldability) throws SQLException {
-        throw new UnsupportedOperationException("Connection.prepareStatement(String,int,int,int) unsupported");
+        return prepareStatement(sql);
     }
 
     @Override
@@ -947,42 +923,40 @@ public class CsvConnection implements Connection {
                                          int resultSetType,
                                          int resultSetConcurrency,
                                          int resultSetHoldability) throws SQLException {
-        throw new UnsupportedOperationException("Connection.prepareCall(String,int,int,int) unsupported");
+        return prepareCall(sql);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-        throw new UnsupportedOperationException("Connection.prepareStatement(String,int) unsupported");
+        return prepareStatement(sql);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-        throw new UnsupportedOperationException("Connection.prepareStatement(String,int[]) unsupported");
+        return prepareStatement(sql);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-        throw new UnsupportedOperationException("Connection.prepareStatement(String,String[]) unsupported");
+        return prepareStatement(sql);
     }
 
     @Override
     public void releaseSavepoint(Savepoint savePoint) throws SQLException {
-        throw new UnsupportedOperationException("Connection.releaseSavepoint(Savepoint) unsupported");
     }
 
     @Override
     public void rollback(Savepoint savePoint) throws SQLException {
-        throw new UnsupportedOperationException("Connection.rollback(Savepoint) unsupported");
     }
 
     @Override
     public Savepoint setSavepoint() throws SQLException {
-        throw new UnsupportedOperationException("Connection.setSavepoint() unsupported");
+        return null;
     }
 
     @Override
     public Savepoint setSavepoint(String str) throws SQLException {
-        throw new UnsupportedOperationException("Connection.setSavepoint(String) unsupported");
+        return null;
     }
 
     //---------------------------------------------------------------------
